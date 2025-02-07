@@ -136,7 +136,7 @@ function App() {
 
   return (
     <main className='flex flex-col h-screen w-full overflow-hidden bg-red-950'>
-      <h1 className='w-full flex justify-center mx-auto p-[20px] text-[20px] font-bold text-white'>HTML GENERATOR</h1>
+      <h1 className='w-full flex justify-center mx-auto p-[20px] text-[20px] font-bold text-white'>MIP GENERATOR</h1>
       <section id='content' className='overflow-y-scroll flex w-full  '>
         <div className='flex flex-col mx-auto items-center w-1/2 h-full  p-[50px] text-[white] my-[50px] rounded-2xl'>
           <form className='flex flex-col w-full gap-10 mb-[20%]' onSubmit={onSubmit}>
