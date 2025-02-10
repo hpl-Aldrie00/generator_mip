@@ -1,8 +1,18 @@
 body::-webkit-scrollbar,
-html::-webkit-scrollbar{
+html::-webkit-scrollbar {
     display: none;
 }
-#content::-webkit-scrollbar{
+
+#content::-webkit-scrollbar {
     height: 0;
     width: 0;
+}
+
+input {
+    padding: 10px;
+    background: transparent;
+}
+
+button {
+    outline: 1px solid black;
 }

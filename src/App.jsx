@@ -135,18 +135,18 @@ function App() {
 
 
   return (
-    <main className='flex flex-col h-screen w-full overflow-hidden bg-red-950'>
-      <h1 className='w-full flex justify-center mx-auto p-[20px] text-[20px] font-bold text-white'>MIP GENERATOR</h1>
+    <main className='flex flex-col h-screen w-full overflow-hidden text-black bg-red-100'>
+      <h1 className='w-full flex justify-center mx-auto p-[20px] text-[20px] font-bold'>MIP GENERATOR</h1>
       <section id='content' className='overflow-y-scroll flex w-full  '>
-        <div className='flex flex-col mx-auto items-center w-1/2 h-full  p-[50px] text-[white] my-[50px] rounded-2xl'>
-          <form className='flex flex-col w-full gap-10 mb-[20%]' onSubmit={onSubmit}>
-            <label htmlFor=""> Site Name:
-              <input className='ml-[5%] text-black' type="text" placeholder='input website title' value={titleText} onChange={(e) => setTitleText(e.target.value)} />
+        <div className='flex flex-col mx-auto items-end w-full h-full  p-[50px] text-[white] my-[50px] rounded-2xl'>
+          <form className='flex flex-col w-full gap-10' onSubmit={onSubmit}>
+            <label htmlFor="" className='text-black  border-b-2 border-black '> Site Name:
+              <input className='ml-[10px] text-black outline outline-1 outline-black' type="text" placeholder='input website title' value={titleText} onChange={(e) => setTitleText(e.target.value)} />
             </label>
             {allForms.length > 0 ? allForms.map((item, i) => (<AddComponent allForms={allForms} setAllForms={setAllForms} item={item} key={`NewComponent_${i}`} />)) : null}
-            {allForms.length > 0 ? <button type='submit' className='border-2 rounded-2xl fixed bottom-0 left-[35%] w-1/4 h-[5rem] bg-white text-black'>SUBMIT</button> : null}
+            <div className='flex justify-center items-center mx-auto border-2 border-black rounded-2xl w-1/4 p-[10px] text-black' onClick={addInputComponents}>Add Component</div>
+            {allForms.length > 0 ? <button type='submit' className='border-2 rounded-2xl fixed bottom-0 right-0 w-1/4 h-[5rem] bg-red-100 text-black'>SUBMIT</button> : null}
           </form>
-          <button className='border-2 rounded-2xl w-1/2 p-[10px]' onClick={addInputComponents}>Add Component</button>
         </div>
       </section>
     </main>
