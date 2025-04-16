@@ -74,8 +74,8 @@ margin: 0
         width: 100%;
     }
     .max-w-half{
-        max-width: 300px;
-        min-width: 50%;
+        width: 50%;
+        max-width: 50%;
     }
         body::-webkit-scrollbar,
         html::-webkit-scrollbar{
@@ -373,3 +373,29 @@ export const carouselVersion1Css = `
       transform: rotate(180deg);
     }
 `
+
+export const normalVideo = `
+     .vid_container {
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .vid_container video {
+            width: 100%;
+        }
+`
+
+export const speedUpVideos = (speed = '.5') => {
+  return `
+    <script>
+         const videos = document.querySelectorAll('.video')
+              videos.forEach(video => {
+            video.onloadedmetadata = function () {
+                video.playbackRate = ${+speed}
+            }
+        })
+    </script>
+  `
+}

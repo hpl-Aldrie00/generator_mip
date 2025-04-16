@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { v4 } from 'uuid'
 import './App.css'
-import { ALLCSS, autoScrollCta, FILEDOWNLOAD, carouselVersion1, carouselVersion1Css } from './customs'
+import { ALLCSS, autoScrollCta, FILEDOWNLOAD, carouselVersion1, carouselVersion1Css, normalVideo, speedUpVideos } from './customs'
 import AddComponent from './AddComponent'
 
 function App() {
@@ -23,7 +23,6 @@ function App() {
 
   const generateCarousel = (item) => {
     const { hasNavBtn = true, carouselFiles, id } = item
-    const boolHasNavBtn = JSON.parse(hasNavBtn)
     return (`
     <section class="carousel_container">
             <div class="slider">
@@ -48,6 +47,19 @@ function App() {
     `)
   }
 
+  const generateVideo = (item) => {
+    const { video } = item
+
+    return (`
+      <div class="vid_container">
+        <video class="video" muted autoplay playbackRate loop>
+          <source src=${video} />
+        </video>
+      </div>
+
+      `)
+  }
+
 
   const generateHTML = (allHTML) => {
     setMainContainer(
@@ -63,18 +75,27 @@ function App() {
     let allHTML = ''
     let allClass = ''
     let newScripts = []
+    let hasVidScript = false
     allForms.forEach((item) => {
 
       const hasCta = item.imgName.includes('cta')
       const hasCarousel = item.class.includes('carousel_container')
+      const hasVid = item.class.includes('vid_container')
       if (hasCta) {
         newScripts.push(autoScrollCta)
         allHTML += `<div class="${item.class}" onclick="mraid.open()">
         <img class="${item.imgName} imgFull max-w-half "/>
       </div>`;
       }
+      else if (hasVid) {
+        allHTML += generateVideo(item)
+        if (item?.slowdown != '1' && !hasVidScript) {
+          newScripts.push(speedUpVideos(item?.slowdown))
+          hasVidScript = true
+        }
+        allClass += normalVideo;
+      }
       else if (hasCarousel) {
-        console.log(item)
         newScripts.push(carouselVersion1)
         allHTML += generateCarousel(item)
         allClass += carouselVersion1Css;
@@ -135,17 +156,17 @@ function App() {
 
 
   return (
-    <main className='flex flex-col h-screen w-full overflow-hidden text-black bg-red-100'>
+    <main className='flex flex-col h-screen w-full overflow-hidden text-black bg-gray-400'>
       <h1 className='w-full flex justify-center mx-auto p-[20px] text-[20px] font-bold'>MIP GENERATOR</h1>
-      <section id='content' className='overflow-y-scroll flex w-full  '>
-        <div className='flex flex-col mx-auto items-end w-full h-full  p-[50px] text-[white] my-[50px] rounded-2xl'>
-          <form className='flex flex-col w-full gap-10' onSubmit={onSubmit}>
-            <label htmlFor="" className='text-black  border-b-2 border-black '> Site Name:
+      <section id='content' className='overflow-y-scroll flex w-full'>
+        <div className='flex flex-col mx-auto w-full h-full  p-[50px] text-[white] my-[50px] rounded-2xl'>
+          <form className='flex flex-col w-1/2 gap-10 pb-[50px]' onSubmit={onSubmit}>
+            <label htmlFor="" className='text-black  p-[20px] border-2 border-black rounded-xl'> Site Name:
               <input className='ml-[10px] text-black outline outline-1 outline-black' type="text" placeholder='input website title' value={titleText} onChange={(e) => setTitleText(e.target.value)} />
             </label>
             {allForms.length > 0 ? allForms.map((item, i) => (<AddComponent allForms={allForms} setAllForms={setAllForms} item={item} key={`NewComponent_${i}`} />)) : null}
-            <div className='flex justify-center items-center mx-auto border-2 border-black rounded-2xl w-1/4 p-[10px] text-black' onClick={addInputComponents}>Add Component</div>
-            {allForms.length > 0 ? <button type='submit' className='border-2 rounded-2xl fixed bottom-0 right-0 w-1/4 h-[5rem] bg-red-100 text-black'>SUBMIT</button> : null}
+            <div className='flex justify-center items-center fixed top-[50%]  left-[52%] mx-auto border-2 border-black rounded-2xl w-[300px] h-[5rem] p-[10px] text-black' onClick={addInputComponents}>Add Component</div>
+            {allForms.length > 0 ? <button type='submit' className='border-2 rounded-2xl fixed top-[50%] right-[10%]  w-[300px] h-[5rem]  text-black'>SUBMIT</button> : null}
           </form>
         </div>
       </section>

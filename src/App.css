@@ -11,6 +11,13 @@ html::-webkit-scrollbar {
 input {
     padding: 10px;
     background: transparent;
+
+}
+
+input[type="text"] {
+    outline: 1px solid black;
+    margin: 0 0 0 10px;
+    border-radius: 10px;
 }
 
 button {
