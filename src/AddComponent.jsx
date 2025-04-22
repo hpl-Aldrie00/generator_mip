@@ -12,9 +12,9 @@ const AddComponent = ({ allForms, setAllForms, item }) => {
   const [slowdown, setSlowdown] = useState('1')
   const [carouselVersion, setCarouselVersion] = useState(0);
   const optionVal = [0, 1, 2, 3, 4];
-  const dropChoice = ['header', 'content', 'cta', 'carousel', 'video'];
+  const dropChoice = ['header', 'content', 'cta', 'carousel', 'video', 'floating video'];
   const carouselVersionArr = ['v1', 'v2',];
-  const dropChoiceClass = ['title_header', 'content', 'cta-button-container pulse-button cta', 'carousel_container', 'vid_container'];
+  const dropChoiceClass = ['title_header', 'content', 'cta-button-container pulse-button cta', 'carousel_container', 'vid_container', 'floating_video_container'];
 
 
   const updateAllForms = (update) => { // update main files
@@ -78,7 +78,8 @@ const AddComponent = ({ allForms, setAllForms, item }) => {
     const NewaddVideoFile = { ...item, slowdown }
     updateAllForms(NewaddVideoFile)
   }, [slowdown])
-  const multipleConvertToBase64 = async (files) => {
+
+  async function multipleConvertToBase64(files) {
     return Promise.all(
       Array.from(files).map(item => convertToBase64(item))
     )

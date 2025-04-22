@@ -34,15 +34,14 @@ margin: 0
         flex-direction: column;
         align-items: center;
         width: 100vw;
-        height: 100vh;
         max-width: 100%;
-        overflow: hidden;
+        overflow-y: scroll;
     }
     .section_content{
-        overflow-y: scroll;
         display: flex;
         flex-direction: column;
         align-items: center;
+        overflow-y: scroll;
     }
     .title_header{
         width: 100%;
@@ -387,15 +386,167 @@ export const normalVideo = `
         }
 `
 
+export const floatingVideo = `
+
+`
+
 export const speedUpVideos = (speed = '.5') => {
   return `
-    <script>
-         const videos = document.querySelectorAll('.video')
-              videos.forEach(video => {
-            video.onloadedmetadata = function () {
-                video.playbackRate = ${+speed}
-            }
-        })
+  <script>
+   document.addEventListener('DOMContentLoaded', () => {
+  const videos = document.querySelectorAll('.video');
+
+  videos.forEach(video => {
+    if (video.readyState >= 1) {
+      video.playbackRate = ${speed};
+    } else {
+      video.onloadedmetadata = function () {
+        video.playbackRate = ${speed};
+      };
+    }
+  });
+});
     </script>
   `
 }
+
+export const carouselVersion2 = `
+  <script>
+    const slider = document.querySelectorAll('.slider');
+    const prev = document.querySelectorAll('#prev');
+    const next = document.querySelectorAll('#next');
+    const dots_container = document.querySelectorAll('.dots_container')
+
+    let currentIndex = []
+
+    slider.forEach((slide, sliderIndex) => {
+      let timeout;
+      let autoNextInterval;
+      let totalItems = 0
+      let isTransitioning = false
+      const copySlider = [...slide?.children]
+      currentIndex[sliderIndex] = 1
+
+      const firstSlide = slide.firstElementChild.cloneNode(true);
+      const lastSlide = slide.lastElementChild.cloneNode(true);
+      slide?.appendChild(firstSlide);
+      slide?.insertBefore(lastSlide, slide.firstElementChild);
+      totalItems = slide.children.length;
+      copySlider.forEach((_, i) => {
+        const dot = document.createElement('div');
+           dot.classList.add('dot', 'dot' + sliderIndex);
+        if (currentIndex[sliderIndex] === i + 1) dot.classList.add('active'); // Set the first dot as active
+        dot.addEventListener('click', () => goToSlide(i + 1));
+        dots_container[sliderIndex]?.appendChild(dot);
+      });
+
+      function goToSlide(i) {
+        currentIndex[sliderIndex] = i
+        updateCarousel()
+      }
+
+      function updateActiveDot() {
+        document.querySelectorAll('.dot' + sliderIndex).forEach((dot, dotIndex) => {
+          dot.classList.toggle('active',
+            dotIndex === currentIndex[sliderIndex] - 1 ||
+            (dotIndex === 0 && currentIndex[sliderIndex] === totalItems - 1) ||
+            (dotIndex === copySlider.length - 1 && currentIndex[sliderIndex] <= 0)
+          )
+        });
+      }
+
+      function updateCarousel() {
+        slide.style.transform = "translate(-" + (currentIndex[sliderIndex] * 100) + "%)"
+        updateActiveDot()
+        console.log(currentIndex, 'currentIndexzxc')
+      }
+
+      slide.addEventListener("transitionend", () => {
+        isTransitioning = false
+        if (currentIndex[sliderIndex] >= totalItems - 1) {
+          // If on the cloned last slide, jump back to real first slide
+          slide.style.transition = "none";
+          currentIndex[sliderIndex] = 1;
+          updateCarousel();
+        } else if (currentIndex[sliderIndex] <= 0) {
+          // If on the cloned first slide, jump back to real last slide
+          slide.style.transition = "none";
+          currentIndex[sliderIndex] = totalItems - 2;
+          updateCarousel();
+        }
+      });
+
+
+      const nextSlide = () => {
+        if (isTransitioning) return
+        isTransitioning = true
+        currentIndex[sliderIndex]++;
+        slide.style.transition = "transform 0.5s ease-in-out";
+        updateCarousel();
+        resetInterval();
+      };
+
+      const prevSlide = () => {
+        if (isTransitioning) return
+        isTransitioning = true
+        currentIndex[sliderIndex]--;
+        slide.style.transition = "transform 0.5s ease-in-out";
+        updateCarousel();
+        resetInterval();
+      };
+      const onClickArr = ["touchstart", "mousedown", "touchend", "mouseup"]
+      // const onReleaseArr = []
+
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      onClickArr.forEach((eString, index) => {
+        slide.addEventListener(eString, (e) => {
+          const onTouch = e.touches[0]?.clientX
+          const onTouches = e.changedTouches[0]?.clientX
+          if (onTouch) {
+            touchStartX = onTouch
+          } else if (onTouches) {
+            touchEndX = onTouches
+          } else {
+            touchStartX = e?.clientX
+            touchEndX = e?.clientX
+          }
+        })
+      })
+      slide.addEventListener("touchstart", (e) => {
+        touchStartX = e.touches[0].clientX;
+      });
+      slide.addEventListener("touchend", (e) => {
+        touchEndX = e.changedTouches[0].clientX;
+        handleSwipe();
+      });
+
+      function handleSwipe() {
+        const swipeThreshold = 50;
+        const difference = touchStartX - touchEndX;
+
+        if (Math.abs(difference) > swipeThreshold) {
+          if (difference > 0) {
+            nextSlide();
+          } else {
+            prevSlide();
+          }
+        }
+      }
+
+      prev[sliderIndex]?.addEventListener('click', prevSlide)
+      next[sliderIndex]?.addEventListener('click', nextSlide)
+      autoNextInterval = setInterval(nextSlide, 2000)
+
+      function resetInterval() {
+        clearInterval(autoNextInterval)
+        autoNextInterval = setInterval(nextSlide, 2000)
+      }
+
+    })
+
+
+
+  </script>
+`

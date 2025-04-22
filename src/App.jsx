@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { v4 } from 'uuid'
 import './App.css'
-import { ALLCSS, autoScrollCta, FILEDOWNLOAD, carouselVersion1, carouselVersion1Css, normalVideo, speedUpVideos } from './customs'
+import { ALLCSS, autoScrollCta, FILEDOWNLOAD, carouselVersion1, carouselVersion1Css, normalVideo, speedUpVideos, carouselVersion2 } from './customs'
 import AddComponent from './AddComponent'
 
 function App() {
@@ -52,7 +52,7 @@ function App() {
 
     return (`
       <div class="vid_container">
-        <video class="video" muted autoplay playbackRate loop>
+        <video class="video" muted autoplay loop>
           <source src=${video} />
         </video>
       </div>
@@ -61,28 +61,42 @@ function App() {
   }
 
 
-  const generateHTML = (allHTML) => {
+  const generateHTML = (allHTML, header) => {
     setMainContainer(
       `<main class="main_container">
+      ${header}
         <section id="content" class="section_content">
           ${allHTML}
         </section>
     </main>`)
   }
+
+
   const onSubmit = (e) => {
     console.log(allForms, 'click')
     e.preventDefault()
+    let header = ''
     let allHTML = ''
     let allClass = ''
     let newScripts = []
     let hasVidScript = false
+    let hasCarouselScript = false
     allForms.forEach((item) => {
 
       const hasCta = item.imgName.includes('cta')
       const hasCarousel = item.class.includes('carousel_container')
       const hasVid = item.class.includes('vid_container')
-      if (hasCta) {
+      const hasHeader = item.class.includes('header')
+      const hasFloatingVideo = item.class.includes('floating_video_container')
+      if (hasHeader || hasFloatingVideo) {
+        header += `
+        `
+      }
+      else if (hasCta) {
         newScripts.push(autoScrollCta)
+        allClass += `.${item.imgName}{
+          content: url('${item.file}')
+        }`;
         allHTML += `<div class="${item.class}" onclick="mraid.open()">
         <img class="${item.imgName} imgFull max-w-half "/>
       </div>`;
@@ -92,11 +106,14 @@ function App() {
         if (item?.slowdown != '1' && !hasVidScript) {
           newScripts.push(speedUpVideos(item?.slowdown))
           hasVidScript = true
+          allClass += normalVideo;
         }
-        allClass += normalVideo;
       }
       else if (hasCarousel) {
-        newScripts.push(carouselVersion1)
+        if (!hasCarouselScript) {
+          newScripts.push(carouselVersion2)
+          hasCarouselScript = true
+        }
         allHTML += generateCarousel(item)
         allClass += carouselVersion1Css;
         allClass += `
@@ -120,15 +137,15 @@ function App() {
         allHTML += `<div class="${item.class}">
         <img class="${item.imgName} imgFull" />
         </div>`;
+        allClass += `.${item.imgName}{
+          content: url('${item.file}')
+        }`;
       }
-      allClass += `.${item.imgName}{
-        content: url('${item.file}')
-      }`;
 
     })
     setCustomCSS(`${allClass} ${ALLCSS}`)
     setScripts(newScripts)
-    generateHTML(allHTML)
+    generateHTML(allHTML, header)
     if (mainContainer) generateAndDownload()
   }
 
