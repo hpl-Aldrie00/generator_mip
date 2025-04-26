@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { v4 } from 'uuid'
 import './App.css'
-import { ALLCSS, autoScrollCta, FILEDOWNLOAD, carouselVersion1, carouselVersion1Css, normalVideo, speedUpVideos, carouselVersion2 } from './customs'
+import { ALLCSS, autoScrollCta, FILEDOWNLOAD, carouselVersion1, carouselVersion1Css, normalVideo, speedUpVideos, carouselVersion2, floatingVideoCss, floatingVideoScript } from './customs'
 import AddComponent from './AddComponent'
 
 function App() {
@@ -88,26 +88,49 @@ function App() {
       const hasVid = item.class.includes('vid_container')
       const hasHeader = item.class.includes('header')
       const hasFloatingVideo = item.class.includes('floating_video_container')
-      if (hasHeader || hasFloatingVideo) {
+      if (hasHeader) {
         header += `
-        `
+        <div class="${item.class} float">
+          <img class="${item.imgName} imgFull" />
+        </div>
+        <div class="${item.class}2">
+          <img class="${item.imgName} imgFull"/>
+        </div>
+        `;
+        allClass += `.${item.imgName}{
+          content: url('${item.file}')
+        }`;
+      } else if (hasFloatingVideo) {
+        header += ` <div class="${item.class}">
+        <video id="vid1" autoplay loop muted>
+        <source src="${item?.floatingVideo}"/>
+        </video>
+          <div class="volume_container">
+          <img class="volume mute" alt="">
+        </div>
+        </div>
+      
+        `;
+        allClass += floatingVideoCss
+        newScripts.push(floatingVideoScript)
       }
       else if (hasCta) {
-        newScripts.push(autoScrollCta)
+        // newScripts.push(autoScrollCta)
         allClass += `.${item.imgName}{
           content: url('${item.file}')
         }`;
         allHTML += `<div class="${item.class}" onclick="mraid.open()">
         <img class="${item.imgName} imgFull max-w-half "/>
-      </div>`;
+      </div>
+      `;
       }
       else if (hasVid) {
         allHTML += generateVideo(item)
         if (item?.slowdown != '1' && !hasVidScript) {
           newScripts.push(speedUpVideos(item?.slowdown))
           hasVidScript = true
-          allClass += normalVideo;
         }
+        allClass += normalVideo;
       }
       else if (hasCarousel) {
         if (!hasCarouselScript) {

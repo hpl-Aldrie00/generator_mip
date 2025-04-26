@@ -11,10 +11,10 @@ const AddComponent = ({ allForms, setAllForms, item }) => {
   })
   const [slowdown, setSlowdown] = useState('1')
   const [carouselVersion, setCarouselVersion] = useState(0);
-  const optionVal = [0, 1, 2, 3, 4];
-  const dropChoice = ['header', 'content', 'cta', 'carousel', 'video', 'floating video'];
+  const optionVal = [0, 1, 2, 3, 4, 5]; //add 
+  const dropChoice = ['header', 'content', 'cta', 'carousel', 'video', 'floating_video']; // add
   const carouselVersionArr = ['v1', 'v2',];
-  const dropChoiceClass = ['title_header', 'content', 'cta-button-container pulse-button cta', 'carousel_container', 'vid_container', 'floating_video_container'];
+  const dropChoiceClass = ['title_header', 'content', 'cta-button-container pulse-button cta', 'carousel_container', 'vid_container', 'floating_video_container']; //add
 
 
   const updateAllForms = (update) => { // update main files
@@ -50,6 +50,15 @@ const AddComponent = ({ allForms, setAllForms, item }) => {
       ...item,
       class: dropChoiceClass[currName],
       video: await convertToBase64(e.target.files[0]),
+      slowdown
+    }
+    updateAllForms(addVideoFile)
+  }
+  const addFloatingVideo = async (e) => {
+    let addVideoFile = {
+      ...item,
+      class: dropChoiceClass[currName],
+      floatingVideo: await convertToBase64(e.target.files[0]),
       slowdown
     }
     updateAllForms(addVideoFile)
@@ -106,6 +115,7 @@ const AddComponent = ({ allForms, setAllForms, item }) => {
       reader.readAsDataURL(file);
     });
   }
+
   return (
     <section className='w-full flex h-full text-black border-2 border-black p-[20px] items-center rounded-xl'>
       <div className='w-[50%]'>
@@ -130,24 +140,6 @@ const AddComponent = ({ allForms, setAllForms, item }) => {
               accept="image/png, image/jpeg"
               onChange={handleFileChange}
             /> : null
-        }
-        {
-          currName == 4 ? (
-            <div className='ml-[20%] flex w-full flex-col'>
-              <label htmlFor="">slowdown video enter sample .5':
-                <input type="text" className='w-[50px] mx-2' placeholder='.5' value={slowdown} onChange={(e) => setSlowdown(e.target.value)} />
-              </label>
-              <label htmlFor="">
-                add video
-                <input
-                  type="file"
-                  name={`${dropChoice[currName]}_${item.id}`}
-                  accept="video/*"
-                  onChange={addVideo}
-                />
-              </label>
-            </div>
-          ) : null
         }
         {
           currName == 3
@@ -212,6 +204,42 @@ const AddComponent = ({ allForms, setAllForms, item }) => {
               </div>
             )
             : null
+        }
+        {
+          currName == 4 ? (
+            <div className='ml-[20%] flex w-full flex-col'>
+              <label htmlFor="">slowdown video enter sample .5':
+                <input type="text" className='w-[50px] mx-2' placeholder='.5' value={slowdown} onChange={(e) => setSlowdown(e.target.value)} />
+              </label>
+              <label htmlFor="">
+                add video
+                <input
+                  type="file"
+                  name={`${dropChoice[currName]}_${item.id}`}
+                  accept="video/*"
+                  onChange={addVideo}
+                />
+              </label>
+            </div>
+          ) : null
+        }
+        {
+          currName == 5 ? (
+            <div className='ml-[20%] flex w-full flex-col'>
+              <label htmlFor="">slowdown video enter sample .5':
+                <input type="text" className='w-[50px] mx-2' placeholder='.5' value={slowdown} onChange={(e) => setSlowdown(e.target.value)} />
+              </label>
+              <label htmlFor="">
+                add a floating video
+                <input
+                  type="file"
+                  name={`${dropChoice[currName]}_${item.id}`}
+                  accept="video/*"
+                  onChange={addFloatingVideo}
+                />
+              </label>
+            </div>
+          ) : null
         }
       </div>
       <div onClick={deleteFile} className='w-[200px] h-[50px] flex items-center justify-center border-2 border-black rounded-[10px]'>
